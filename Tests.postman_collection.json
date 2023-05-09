@@ -1,0 +1,563 @@
+{
+	"info": {
+		"_postman_id": "85c9f98e-e061-4281-b8c5-c6246bd56723",
+		"name": "Tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27164130"
+	},
+	"item": [
+		{
+			"name": "Test1",
+			"item": [
+				{
+					"name": "LogIn positive",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let responseData=pm.response.json();\r",
+									"pm.variables.set(\"token\", responseData.token);\r",
+									"pm.test(\"Response code 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"admin\",\r\n    \"password\": \"password123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/auth",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"auth"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LogOut negative",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let responseData=pm.response.json();\r",
+									"\r",
+									"pm.test(\"Body is correct\", function () {\r",
+									"    pm.expect(responseData.reason).to.include(\"Bad credentials\")\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"user\",\r\n    \"password\": \"password123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/auth",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"auth"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Test2",
+			"item": [
+				{
+					"name": "Get bookingids list",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let responseData=pm.response.json();\r",
+									"let bookingIds = []\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"responseData.forEach(element => {bookingIds.push(element.bookingid)})\r",
+									"\r",
+									"pm.variables.set(\"bookingIds\", bookingIds);\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/booking?firstname=Sally",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"booking"
+							],
+							"query": [
+								{
+									"key": "lastnameid",
+									"value": "brown",
+									"disabled": true
+								},
+								{
+									"key": "firstname",
+									"value": "Sally"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check param firstname='Sally'",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let arraylength = pm.variables.get(\"arraylength\");\r",
+									"let itteration = pm.variables.get(\"itteration\");\r",
+									"let responseData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Body is correct\", function () {\r",
+									"    pm.expect(responseData.firstname).to.contain('Sally')\r",
+									"});\r",
+									"\r",
+									"if(itteration < arraylength-1){\r",
+									"    pm.variables.set(\"itteration\", itteration+1);\r",
+									"    postman.setNextRequest(pm.info.requestId)\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let bookingIds = pm.variables.get(\"bookingIds\");\r",
+									"let itteration = pm.variables.get(\"itteration\");\r",
+									"pm.variables.set(\"arraylength\", bookingIds.length);\r",
+									"console.log(bookingIds)\r",
+									"console.log(itteration)\r",
+									"if (itteration === undefined) {\r",
+									"    pm.variables.set(\"itteration\", 0);\r",
+									"    pm.variables.set(\"bookingId\", bookingIds[0]);\r",
+									"}\r",
+									"else {\r",
+									"    pm.variables.set(\"bookingId\", bookingIds[itteration]);\r",
+									"}\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/booking/{{bookingId}}",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"booking",
+								"{{bookingId}}"
+							],
+							"query": [
+								{
+									"key": "lastnameid",
+									"value": "brown",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Test3",
+			"item": [
+				{
+					"name": "Get bookingids list",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let responseData=pm.response.json();\r",
+									"let bookingIds = []\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"responseData.forEach(element => {bookingIds.push(element.bookingid)})\r",
+									"\r",
+									"pm.variables.set(\"bookingIds\", bookingIds);\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/booking?lastname=Wilson",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"booking"
+							],
+							"query": [
+								{
+									"key": "lastname",
+									"value": "Wilson"
+								},
+								{
+									"key": "firstname",
+									"value": "Sally",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check param lastname='Wilson'",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let arraylength = pm.variables.get(\"arraylength\");\r",
+									"let itteration = pm.variables.get(\"itteration\");\r",
+									"let responseData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Body is correct\", function () {\r",
+									"    pm.expect(responseData.lastname).to.contain('Wilson')\r",
+									"});\r",
+									"\r",
+									"if(itteration < arraylength-1){\r",
+									"    pm.variables.set(\"itteration\", itteration+1);\r",
+									"    postman.setNextRequest(pm.info.requestId)\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let bookingIds = pm.variables.get(\"bookingIds\");\r",
+									"let itteration = pm.variables.get(\"itteration\");\r",
+									"pm.variables.set(\"arraylength\", bookingIds.length);\r",
+									"\r",
+									"if (itteration === undefined) {\r",
+									"    pm.variables.set(\"itteration\", 0);\r",
+									"    pm.variables.set(\"bookingId\", bookingIds[0]);\r",
+									"}\r",
+									"else {\r",
+									"    pm.variables.set(\"bookingId\", bookingIds[itteration]);\r",
+									"}\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/booking/{{bookingId}}",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"booking",
+								"{{bookingId}}"
+							],
+							"query": [
+								{
+									"key": "lastnameid",
+									"value": "brown",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Test4",
+			"item": [
+				{
+					"name": "Get bookingids list",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let responseData=pm.response.json();\r",
+									"let bookingIds = []\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"responseData.forEach(element => {bookingIds.push(element.bookingid)})\r",
+									"\r",
+									"pm.variables.set(\"bookingIds\", bookingIds);\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/booking?checkout=2013-02-23",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"booking"
+							],
+							"query": [
+								{
+									"key": "firstname",
+									"value": "Sally",
+									"disabled": true
+								},
+								{
+									"key": "checkout",
+									"value": "2013-02-23"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check param checkout=2013-02-23",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let arraylength = pm.variables.get(\"arraylength\");\r",
+									"let itteration = pm.variables.get(\"itteration\");\r",
+									"let responseData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Body is correct\", function () {\r",
+									"    pm.expect(responseData.bookingdates.checkout).to.be.eql('2013-02-23')\r",
+									"});\r",
+									"\r",
+									"if(itteration < arraylength-1){\r",
+									"    pm.variables.set(\"itteration\", itteration+1);\r",
+									"    postman.setNextRequest(pm.info.requestId)\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let bookingIds = pm.variables.get(\"bookingIds\");\r",
+									"let itteration = pm.variables.get(\"itteration\");\r",
+									"pm.variables.set(\"arraylength\", bookingIds.length);\r",
+									"\r",
+									"if (itteration === undefined) {\r",
+									"    pm.variables.set(\"itteration\", 0);\r",
+									"    pm.variables.set(\"bookingId\", bookingIds[0]);\r",
+									"}\r",
+									"else {\r",
+									"    pm.variables.set(\"bookingId\", bookingIds[itteration]);\r",
+									"}\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/booking/{{bookingId}}",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"booking",
+								"{{bookingId}}"
+							],
+							"query": [
+								{
+									"key": "lastnameid",
+									"value": "brown",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
